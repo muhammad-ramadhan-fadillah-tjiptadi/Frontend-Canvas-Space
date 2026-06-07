@@ -8,8 +8,38 @@ const AdminPesanan = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-
   const [activeProofUrl, setActiveProofUrl] = useState(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportExcel = async () => {
+    setExporting(true);
+    setSuccessMsg("");
+    setErrorMsg("");
+    try {
+      const response = await api.get("/admin/pesanan/export", {
+        responseType: "blob",
+      });
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `laporan-pesanan-${new Date().toISOString().slice(0, 10)}.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setSuccessMsg("Data pesanan berhasil diekspor ke Excel.");
+    } catch (error) {
+      console.error("Gagal mengekspor data Excel:", error);
+      setErrorMsg("Gagal mengekspor data pesanan ke Excel.");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const fetchAllOrders = async (page = 1) => {
     try {
@@ -57,12 +87,27 @@ const AdminPesanan = () => {
 
   return (
     <div className="min-h-screen p-8 md:p-16">
-      <h2 className="mb-4" style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(2.5rem, 4vw, 4rem)", lineHeight: 1.1, textTransform: "uppercase", color: "var(--color-text-primary)" }}>
-        Pesanan<br/>Masuk.
-      </h2>
-      <p className="mb-12 text-[11px] uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
-        Kelola dan verifikasi pesanan
-      </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
+        <div>
+          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(2.5rem, 4vw, 4rem)", lineHeight: 1.1, textTransform: "uppercase", color: "var(--color-text-primary)" }}>
+            Pesanan<br/>Masuk.
+          </h2>
+          <p className="mt-4 text-[11px] uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
+            Kelola dan verifikasi pesanan
+          </p>
+        </div>
+        
+        <button 
+          onClick={handleExportExcel} 
+          disabled={exporting}
+          className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer disabled:opacity-50"
+          style={{ border: "1px solid var(--color-text-primary)", background: "var(--color-text-primary)", color: "var(--color-text-inverted)" }}
+          onMouseEnter={(e) => { if(!exporting){ e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--color-text-primary)"; e.currentTarget.style.boxShadow = "4px 4px 0 var(--color-text-primary)"; } }}
+          onMouseLeave={(e) => { if(!exporting){ e.currentTarget.style.background = "var(--color-text-primary)"; e.currentTarget.style.color = "var(--color-text-inverted)"; e.currentTarget.style.boxShadow = "none"; } }}
+        >
+          {exporting ? "Mengekspor..." : "Ekspor Excel"}
+        </button>
+      </div>
 
       {successMsg && (
         <div className="mb-8 px-6 py-4 flex items-center gap-4 bg-white" style={{ border: "1px solid #10b981", boxShadow: "4px 4px 0 #10b981" }}>
