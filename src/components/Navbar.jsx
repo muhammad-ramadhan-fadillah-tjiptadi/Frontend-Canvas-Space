@@ -3,6 +3,42 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../hooks/useCart";
 
+/* ── History SVG Icon ─────────────────────────────────────────────────── */
+const HistoryIcon = () => (
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+/* ── User SVG Icon ────────────────────────────────────────────────────── */
+const UserIcon = () => (
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
 /* ── Cart SVG Icon ─────────────────────────────────────────────────────── */
 const CartIcon = () => (
   <svg
@@ -139,95 +175,109 @@ const Navbar = () => {
                 ))}
               </>
             )}
-
-            {user?.role === "Pelanggan" && (
-              <>
-                {[
-                  { to: "/riwayat", label: "Riwayat" },
-                  { to: "/profil", label: "Profil" },
-                ].map(({ to, label }) => (
-                  <li key={to}>
-                    <Link
-                      to={to}
-                      style={linkStyle}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color =
-                          "var(--color-text-inverted)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color =
-                          "rgba(255,255,255,0.6)")
-                      }
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </>
-            )}
+            {/* Pelanggan text links removed and converted to icons */}
           </ul>
 
           {/* ── Right Side ── */}
-          <div className="flex items-center gap-5">
-            {/* Cart - Visible to guests and Pelanggan */}
-            {user?.role !== "Admin" && (
-              <Link
-                to="/cart"
-                className="relative flex items-center justify-center"
-                style={{
-                  width: "2.25rem",
-                  height: "2.25rem",
-                  color: "rgba(255,255,255,0.6)",
-                  transition: "color 0.2s ease",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = "var(--color-text-inverted)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "rgba(255,255,255,0.6)")
-                }
-                aria-label={`Keranjang — ${cartItemCount} item`}
-              >
-                <CartIcon />
-                {cartItemCount > 0 && (
-                  <span
-                    className="absolute -top-1 -right-1 flex items-center justify-center text-white"
+          <div className="flex items-center gap-6">
+            
+            {/* Icon Group: Riwayat, Profil, Cart */}
+            <div className="flex items-center gap-4">
+              {user?.role === "Pelanggan" && (
+                <>
+                  <Link
+                    to="/riwayat"
+                    className="relative flex items-center justify-center hidden md:flex"
                     style={{
-                      width: "1.1rem",
-                      height: "1.1rem",
-                      borderRadius: "50%",
-                      background: "var(--color-accent)",
-                      fontSize: "0.45rem",
-                      fontWeight: 700,
-                      letterSpacing: 0,
-                      boxShadow: "0 0 0 2px var(--color-text-primary)",
+                      width: "2.25rem",
+                      height: "2.25rem",
+                      color: "rgba(255,255,255,0.6)",
+                      transition: "color 0.2s ease",
                     }}
-                    aria-hidden="true"
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text-inverted)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                    aria-label="Riwayat Belanja"
+                    title="Riwayat Belanja"
                   >
-                    {cartItemCount}
-                  </span>
-                )}
-              </Link>
-            )}
+                    <HistoryIcon />
+                  </Link>
+
+                  <Link
+                    to="/profil"
+                    className="relative flex items-center justify-center hidden md:flex"
+                    style={{
+                      width: "2.25rem",
+                      height: "2.25rem",
+                      color: "rgba(255,255,255,0.6)",
+                      transition: "color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text-inverted)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                    aria-label="Profil Saya"
+                    title="Profil Saya"
+                  >
+                    <UserIcon />
+                  </Link>
+                </>
+              )}
+
+              {/* Cart - Visible to guests and Pelanggan */}
+              {user?.role !== "Admin" && (
+                <Link
+                  to="/cart"
+                  className="relative flex items-center justify-center"
+                  style={{
+                    width: "2.25rem",
+                    height: "2.25rem",
+                    color: "rgba(255,255,255,0.6)",
+                    transition: "color 0.2s ease",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = "var(--color-text-inverted)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "rgba(255,255,255,0.6)")
+                  }
+                  aria-label={`Keranjang — ${cartItemCount} item`}
+                  title="Keranjang Belanja"
+                >
+                  <CartIcon />
+                  {cartItemCount > 0 && (
+                    <span
+                      className="absolute -top-1 -right-1 flex items-center justify-center text-white"
+                      style={{
+                        width: "1.1rem",
+                        height: "1.1rem",
+                        borderRadius: "50%",
+                        background: "var(--color-accent)",
+                        fontSize: "0.45rem",
+                        fontWeight: 700,
+                        letterSpacing: 0,
+                        boxShadow: "0 0 0 2px var(--color-text-primary)",
+                      }}
+                      aria-hidden="true"
+                    >
+                      {cartItemCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+            </div>
 
             {user ? (
-              <>
-                {/* User chip — hidden on mobile */}
+              <div className="hidden md:flex items-center gap-6">
                 <span
-                  className="hidden sm:inline-flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.18em]"
+                  className="text-[9px] font-bold uppercase tracking-[0.2em]"
                   style={{
-                    color: "rgba(255,255,255,0.6)",
-                    padding: "0.35rem 0.85rem",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    color: "rgba(255,255,255,0.4)",
                   }}
                 >
-                  {user.nama}
+                  HALO, {user.nama ? user.nama.split(" ")[0] : "USER"}
                 </span>
 
-                {/* Logout */}
                 <button
                   onClick={handleLogout}
-                  className="hidden md:inline-block cursor-pointer transition-colors duration-200"
+                  className="cursor-pointer transition-colors duration-200"
                   style={{
                     fontFamily: "var(--font-sans)",
                     fontSize: "0.65rem",
@@ -248,7 +298,7 @@ const Navbar = () => {
                 >
                   Keluar
                 </button>
-              </>
+              </div>
             ) : (
               <div className="hidden md:flex items-center gap-6">
                 <Link
