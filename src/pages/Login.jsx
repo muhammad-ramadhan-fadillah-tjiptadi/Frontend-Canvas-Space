@@ -39,7 +39,11 @@ const Login = () => {
       if (token) {
         try {
           setTimeout(() => {
-            navigate("/");
+            if (result.role === "Admin") {
+              navigate("/admin/dashboard");
+            } else {
+              navigate("/");
+            }
           }, 100);
         } catch (err) {
           navigate("/");
@@ -80,12 +84,11 @@ const Login = () => {
       </div>
 
       {/* Right side: Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-28 relative">
-        <Link to="/" className="absolute top-10 right-10 text-[9px] uppercase tracking-widest font-bold hidden md:block" style={{ color: "var(--color-text-primary)" }}>
-          ← Kembali
-        </Link>
-        
-        <div className="w-full max-w-md">
+      <div className="w-full md:w-1/2 flex flex-col p-8 pt-28 md:p-28 md:pt-32 relative overflow-y-auto max-h-screen">
+        <div className="w-full max-w-md mx-auto my-auto">
+          <Link to="/" className="text-[9px] uppercase tracking-widest font-bold mb-8 inline-block" style={{ color: "var(--color-text-primary)" }}>
+            ← Kembali
+          </Link>
           <h2 className="mb-2" style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(2rem, 3vw, 2.5rem)", lineHeight: 1.1 }}>
             Masuk ke Ruang Anda.
           </h2>

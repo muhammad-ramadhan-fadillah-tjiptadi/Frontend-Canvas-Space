@@ -9,7 +9,6 @@ const AdminPesanan = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Modal State untuk melihat bukti transfer
   const [activeProofUrl, setActiveProofUrl] = useState(null);
 
   const fetchAllOrders = async (page = 1) => {
@@ -29,38 +28,22 @@ const AdminPesanan = () => {
     fetchAllOrders(currentPage);
   }, [currentPage]);
 
-  // Mengubah status pesanan
   const handleUpdateStatus = async (orderId, newStatus) => {
-    if (!window.confirm(`Apakah Anda yakin ingin mengubah status pesanan menjadi '${newStatus}'?`)) {
-      return;
-    }
-
     setSuccessMsg("");
     setErrorMsg("");
-
     try {
-      const response = await api.put(`/admin/pesanan/${orderId}/status`, {
-        status: newStatus,
-      });
+      const response = await api.put(`/admin/pesanan/${orderId}/status`, { status: newStatus });
       setSuccessMsg(response.data.message);
-      
-      // Re-fetch data terbaru
       fetchAllOrders(currentPage);
     } catch (error) {
-      console.error("Gagal mengubah status:", error);
       setErrorMsg(error.response?.data?.message || "Gagal memperbarui status pesanan.");
     }
   };
 
   const formatRupiah = (number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(number);
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
   };
 
-  // Helper untuk menentukan opsi transisi status yang valid
   const getAllowedStatusOptions = (currentStatus) => {
     const map = {
       Pending: ["Diproses", "Dibatalkan"],
@@ -73,138 +56,130 @@ const AdminPesanan = () => {
   };
 
   return (
-    <div className="admin-page">
-      <div className="admin-container">
-        <h2>Dashboard Admin: Pesanan Masuk</h2>
-        <p className="admin-subtitle">Kelola dan verifikasi pesanan furniture masuk dari semua pelanggan</p>
+    <div className="min-h-screen p-8 md:p-16">
+      <h2 className="mb-4" style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(2.5rem, 4vw, 4rem)", lineHeight: 1.1, textTransform: "uppercase", color: "var(--color-text-primary)" }}>
+        Pesanan<br/>Masuk.
+      </h2>
+      <p className="mb-12 text-[11px] uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>
+        Kelola dan verifikasi pesanan
+      </p>
 
-        {successMsg && <div className="alert alert-success">{successMsg}</div>}
-        {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
+      {successMsg && (
+        <div className="mb-8 px-6 py-4 flex items-center gap-4 bg-white" style={{ border: "1px solid #10b981", boxShadow: "4px 4px 0 #10b981" }}>
+          <span style={{ color: "#10b981", fontSize: "12px" }}>■</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">{successMsg}</span>
+        </div>
+      )}
+      {errorMsg && (
+        <div className="mb-8 px-6 py-4 flex items-center gap-4 bg-white" style={{ border: "1px solid #ef4444", boxShadow: "4px 4px 0 #ef4444" }}>
+          <span style={{ color: "#ef4444", fontSize: "12px" }}>■</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">{errorMsg}</span>
+        </div>
+      )}
 
-        {loading ? (
-          <div className="loading-container">
-            <div className="spinner"></div>
-            <p>Memuat daftar pesanan...</p>
-          </div>
-        ) : orders.length > 0 ? (
-          <div className="admin-orders-table-wrapper">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Pelanggan</th>
-                  <th>Tanggal</th>
-                  <th>Total Tagihan</th>
-                  <th>Status Pesanan</th>
-                  <th>Status Bayar</th>
-                  <th>Bukti</th>
-                  <th>Aksi Tindakan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => {
-                  const allowedOptions = getAllowedStatusOptions(order.status_pesanan);
-                  
-                  return (
-                    <tr key={order.id}>
-                      <td>#{order.id}</td>
-                      <td>
-                        <div className="table-user-details">
-                          <strong>{order.user?.nama || "Pelanggan Terhapus"}</strong>
-                          <span>{order.user?.email || "-"}</span>
+      {loading ? (
+        <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--color-text-primary)" }}>Memuat daftar pesanan...</div>
+      ) : orders.length > 0 ? (
+        <div className="overflow-x-auto pb-10">
+          <table className="w-full text-left" style={{ borderCollapse: "collapse", color: "var(--color-text-primary)" }}>
+            <thead>
+              <tr style={{ borderBottom: "2px solid var(--color-text-primary)" }}>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">ID</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Pelanggan</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Tanggal</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Total</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Status</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Bayar</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Bukti</th>
+                <th className="p-4 text-[10px] uppercase tracking-widest font-bold whitespace-nowrap">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => {
+                const allowedOptions = getAllowedStatusOptions(order.status_pesanan);
+                return (
+                  <tr key={order.id} style={{ borderBottom: "1px solid var(--color-border-subtle)" }}>
+                    <td className="p-4" style={{ fontFamily: "var(--font-mono)", fontSize: "12px" }}>#{order.id}</td>
+                    <td className="p-4 flex flex-col gap-1">
+                      <strong style={{ fontFamily: "var(--font-serif)", fontSize: "14px" }}>{order.user?.nama || "Terhapus"}</strong>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>{order.user?.email || "-"}</span>
+                    </td>
+                    <td className="p-4 whitespace-nowrap" style={{ fontFamily: "var(--font-mono)", fontSize: "12px" }}>
+                      {new Date(order.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                    </td>
+                    <td className="p-4 font-bold whitespace-nowrap" style={{ fontFamily: "var(--font-mono)", fontSize: "13px" }}>{formatRupiah(order.total_harga)}</td>
+                    <td className="p-4 whitespace-nowrap">
+                      <span className="inline-block px-2 py-1 text-[9px] font-bold uppercase tracking-widest" style={{ border: "1px solid var(--color-text-primary)" }}>
+                        {order.status_pesanan}
+                      </span>
+                    </td>
+                    <td className="p-4 whitespace-nowrap">
+                      <span className="inline-block px-2 py-1 text-[9px] font-bold uppercase tracking-widest" style={{ border: "1px solid var(--color-text-primary)" }}>
+                        {order.status_bayar}
+                      </span>
+                    </td>
+                    <td className="p-4 whitespace-nowrap">
+                      {order.bukti_transfer ? (
+                        <button
+                          onClick={() => setActiveProofUrl(`http://localhost:8000/storage/${order.bukti_transfer}`)}
+                          className="text-[10px] font-bold uppercase tracking-widest underline hover:opacity-70" style={{ color: "var(--color-text-primary)" }}
+                        >
+                          Lihat Bukti
+                        </button>
+                      ) : (
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px" }}>-</span>
+                      )}
+                    </td>
+                    <td className="p-4 whitespace-nowrap">
+                      {allowedOptions.length > 0 ? (
+                        <div className="flex flex-col gap-2">
+                          {allowedOptions.map((opt) => (
+                            <button
+                              key={opt}
+                              onClick={() => handleUpdateStatus(order.id, opt)}
+                              className="px-3 py-2 text-[9px] font-bold uppercase tracking-widest transition-all"
+                              style={{ border: "1px solid var(--color-text-primary)", background: "transparent", color: "var(--color-text-primary)" }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-text-primary)"; e.currentTarget.style.color = "var(--color-text-inverted)"; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--color-text-primary)"; }}
+                            >
+                              Set {opt}
+                            </button>
+                          ))}
                         </div>
-                      </td>
-                      <td>
-                        {new Date(order.tanggal).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric"
-                        })}
-                      </td>
-                      <td className="table-price">{formatRupiah(order.total_harga)}</td>
-                      <td>
-                        <span className={`table-badge badge-status-${order.status_pesanan.toLowerCase()}`}>
-                          {order.status_pesanan}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={`table-badge badge-payment-${order.status_bayar.replace(/\s+/g, '-').toLowerCase()}`}>
-                          {order.status_bayar}
-                        </span>
-                      </td>
-                      <td>
-                        {order.bukti_transfer ? (
-                          <button
-                            onClick={() => setActiveProofUrl(`http://localhost:8000/storage/${order.bukti_transfer}`)}
-                            className="view-proof-btn"
-                          >
-                            👁️ Lihat Bukti
-                          </button>
-                        ) : (
-                          <span className="no-proof">-</span>
-                        )}
-                      </td>
-                      <td>
-                        {allowedOptions.length > 0 ? (
-                          <div className="action-buttons-group">
-                            {allowedOptions.map((opt) => (
-                              <button
-                                key={opt}
-                                onClick={() => handleUpdateStatus(order.id, opt)}
-                                className={`status-action-btn btn-${opt.toLowerCase()}`}
-                              >
-                                Set {opt}
-                              </button>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-muted">Final (Selesai/Batal)</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      ) : (
+                        <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--color-text-muted)" }}>Final</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="pagination">
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  disabled={currentPage === 1}
-                >
-                  Sebelumnya
-                </button>
-                <span className="page-info">
-                  Halaman {currentPage} dari {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                >
-                  Selanjutnya
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <p>Belum ada transaksi pembelian masuk.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Modal Tampilan Bukti Transfer (Glassmorphism Modal) */}
-      {activeProofUrl && (
-        <div className="modal-backdrop" onClick={() => setActiveProofUrl(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Bukti Transfer Pembayaran</h3>
-              <button className="close-modal-btn" onClick={() => setActiveProofUrl(null)}>×</button>
+          {totalPages > 1 && (
+            <div className="mt-12 flex justify-between items-center" style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--color-text-primary)" }}>
+              <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="uppercase font-bold underline disabled:opacity-30">Sebelumnya</button>
+              <span>Hal {currentPage} / {totalPages}</span>
+              <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="uppercase font-bold underline disabled:opacity-30">Berikutnya</button>
             </div>
-            <div className="modal-body">
-              <img src={activeProofUrl} alt="Struk Transfer Pembayaran" className="proof-full-img" />
+          )}
+        </div>
+      ) : (
+        <div className="text-[11px] uppercase tracking-widest border p-8" style={{ borderColor: "var(--color-text-primary)", color: "var(--color-text-primary)" }}>
+          Belum ada transaksi pembelian masuk.
+        </div>
+      )}
+
+      {/* Modal Bukti Transfer */}
+      {activeProofUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setActiveProofUrl(null)}>
+          <div className="relative bg-white max-w-2xl w-full max-h-[90vh] flex flex-col" style={{ border: "1px solid var(--color-text-primary)", boxShadow: "12px 12px 0 var(--color-text-primary)" }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b" style={{ borderColor: "var(--color-text-primary)" }}>
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-black">Bukti Transfer</h3>
+              <button className="text-xl font-bold hover:scale-110 transition-transform text-black" onClick={() => setActiveProofUrl(null)}>✕</button>
+            </div>
+            <div className="p-6 overflow-auto flex items-center justify-center bg-gray-100 min-h-[300px]">
+              <img src={activeProofUrl} alt="Struk Transfer" className="max-w-full max-h-[70vh] object-contain border border-black" />
             </div>
           </div>
         </div>

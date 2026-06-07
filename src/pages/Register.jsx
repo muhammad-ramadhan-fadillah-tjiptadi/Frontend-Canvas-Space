@@ -87,12 +87,11 @@ const Register = () => {
       </div>
 
       {/* Right side: Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-12 relative md:order-1 overflow-y-auto max-h-screen">
-        <Link to="/" className="absolute top-8 left-10 text-[9px] uppercase tracking-widest font-bold hidden md:block" style={{ color: "var(--color-text-primary)" }}>
-          ← Kembali
-        </Link>
-        
-        <div className="w-full max-w-md mt-10 md:mt-0 pb-10">
+      <div className="w-full md:w-1/2 flex flex-col p-8 pt-28 md:p-12 md:pt-32 relative md:order-1 overflow-y-auto max-h-screen">
+        <div className="w-full max-w-md mx-auto my-auto pb-10">
+          <Link to="/" className="text-[9px] uppercase tracking-widest font-bold mb-8 inline-block" style={{ color: "var(--color-text-primary)" }}>
+            ← Kembali
+          </Link>
           <h2 className="mb-2" style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(2rem, 3vw, 2.5rem)", lineHeight: 1.1 }}>
             Menjadi Bagian.
           </h2>

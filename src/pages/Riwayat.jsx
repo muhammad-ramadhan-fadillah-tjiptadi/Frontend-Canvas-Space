@@ -225,15 +225,15 @@ const Riwayat = () => {
                       </div>
                     ) : order.status_bayar === "Menunggu Verifikasi" ? (
                       <div className="p-4 border" style={{ borderColor: "#ca8a04", background: "#fef08a", color: "#854d0e" }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-center">⏳ Menunggu Verifikasi Admin</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-center">Menunggu Verifikasi Admin</p>
                       </div>
                     ) : order.status_bayar === "Lunas" ? (
                       <div className="p-4 border" style={{ borderColor: "#16a34a", background: "#dcfce7", color: "#166534" }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-center">✅ Pembayaran Terverifikasi</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-center">Pembayaran Terverifikasi</p>
                       </div>
                     ) : order.status_pesanan === "Dibatalkan" ? (
                       <div className="p-4 border" style={{ borderColor: "#dc2626", background: "#fee2e2", color: "#991b1b" }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-center">❌ Pesanan Dibatalkan</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-center">Pesanan Dibatalkan</p>
                       </div>
                     ) : null}
                   </div>
