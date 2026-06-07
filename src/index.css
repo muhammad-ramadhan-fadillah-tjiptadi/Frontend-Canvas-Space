@@ -1,0 +1,99 @@
+/* ── Google Fonts: Bodoni Moda (heading) + Jost (body) ───────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+/* ── Design Tokens ────────────────────────────────────────────────────────── */
+@theme {
+  /* Backgrounds — Premium Light (Warm Plaster/Alabaster) */
+  --color-bg-base: #f7f5f0;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #efece6;
+  --color-bg-card: rgba(255, 255, 255, 0.85);
+  --color-bg-navbar: rgba(247, 245, 240, 0.85);
+  --color-bg-navbar-mobile: rgba(247, 245, 240, 0.97);
+
+  /* Borders */
+  --color-border-subtle: rgba(0, 0, 0, 0.05);
+  --color-border-default: rgba(0, 0, 0, 0.09);
+  --color-border-hover: rgba(0, 0, 0, 0.18);
+
+  /* Text */
+  --color-text-primary: #1e1c1a;
+  --color-text-secondary: #6e6a63;
+  --color-text-muted: #a19c95;
+  --color-text-inverted: #ffffff;
+
+  /* Accent — Warm Luxury Gold */
+  --color-accent: #a37f51;
+  --color-accent-hover: #b89363;
+  --color-accent-muted: rgba(163, 127, 81, 0.08);
+
+  /* Fonts */
+  --font-serif: "Bodoni Moda", Georgia, serif;
+  --font-sans: "Jost", system-ui, -apple-system, sans-serif;
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Base Reset ───────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Selection ────────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(163, 127, 81, 0.25);
+  color: #1e1c1a;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+/* ── Utility: Link reset ──────────────────────────────────────────────────── */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Reduced Motion ───────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
