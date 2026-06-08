@@ -3,7 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import AdminSidebar from "./components/AdminSidebar";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import GuestRoute from "./components/GuestRoute";
 // Halaman Publik
 import Home from "./pages/Home";
 import DetailProduk from "./pages/DetailProduk";
@@ -27,7 +27,7 @@ const AppContent = () => {
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
-    <div className={isAdminRoute ? "flex flex-col md:flex-row min-h-screen w-full" : "app-wrapper"} style={{ background: "var(--color-bg-base)", color: "var(--color-text-primary)" }}>
+    <div className={isAdminRoute ? "flex min-h-screen w-full" : "app-wrapper"} style={{ background: "var(--color-bg-base)", color: "var(--color-text-primary)" }}>
       {isAdminRoute ? <AdminSidebar /> : <Navbar />}
       
       <main className={isAdminRoute ? "flex-1 overflow-x-hidden bg-[var(--color-bg-base)]" : "main-content-area"}>
@@ -35,8 +35,8 @@ const AppContent = () => {
           {/* Rute Publik */}
           <Route path="/" element={<Home />} />
           <Route path="/produk/:id" element={<DetailProduk />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
 
           {/* Rute Terproteksi: Pelanggan */}
           <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
